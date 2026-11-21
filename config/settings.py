@@ -2,23 +2,33 @@ from dotenv import load_dotenv
 import os
 import json
 from pathlib import Path
+from dataclasses import dataclass, field
 
 load_dotenv()
 TEST_DATA_DIR = Path(__file__).parent.parent/"data"
+DOMAIN = os.getenv("DOMAIN")
 
+def _load_json(_path) -> dict:
+    try:
+        with open(_path,"r") as f:
+            return json.load(f)
+    except FileNotFoundError:
+        raise FileNotFoundError(f"Couldn't find file at\n{_path}")
+
+#DATA DICT
+USER_DATA = _load_json(TEST_DATA_DIR/"users.json")
+
+@dataclass
 class Settings:
-    domain = os.getenv("DOMAIN")
-    def _load_json(_path) -> dict:
-        try:
-            with open(_path,"r") as f:
-                return json.load(f)
-        except FileNotFoundError:
-            raise FileNotFoundError(f"Couldn't find file at\n{_path}")
-        
-    
-    #URLS
-    BASE_URL = f"https://{domain}"
-    BASE_API_URL = f"https://api.{domain}"
+    sprint : int
+    api_url : str = field(init=False)
+    ui_url : str = field(init=False)
 
-    #DATA DICT
-    USER_DATA = _load_json(TEST_DATA_DIR/"users.json")
+    def __post_init__(self)->None:
+        sprint = min(self.sprint,5)
+        api_prefix = os.getenv(f"APIV{sprint}")
+        ui_prefix = os.getenv(f"V{self.sprint}")
+        ui_url = f"https://{ui_prefix}.{DOMAIN}" if sprint < 5 else f"https://{DOMAIN}"
+        object.__setattr__(self,"api_url",f"https://{api_prefix}.{DOMAIN}")
+        object.__setattr__(self,"ui_url",ui_url)
+    
