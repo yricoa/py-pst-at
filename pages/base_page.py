@@ -1,10 +1,10 @@
 from playwright.sync_api import Page,Locator,expect
-from config.settings import Settings as S
+from config.settings import Settings
 
 class BasePage:
-    def __init__(self,page:Page,endpoint: str = "", load_verify: str = ""):
+    def __init__(self,page:Page,settings:Settings,endpoint: str = "", load_verify: str = ""):
         self.page = page
-        self.url = f"{S.BASE_URL}/{endpoint}"
+        self.url = f"{settings.ui_url}/{endpoint}"
         self.load_verify = self.page.locator(load_verify)
 
     def navigate(self):

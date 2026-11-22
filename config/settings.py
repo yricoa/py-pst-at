@@ -25,7 +25,7 @@ class Settings:
     ui_url : str = field(init=False)
 
     def __post_init__(self)->None:
-        sprint = min(self.sprint,5)
+        sprint = min(self.sprint,5) if self.sprint is not None else 5
         api_prefix = os.getenv(f"APIV{sprint}")
         ui_prefix = os.getenv(f"V{self.sprint}")
         ui_url = f"https://{ui_prefix}.{DOMAIN}" if sprint < 5 else f"https://{DOMAIN}"
