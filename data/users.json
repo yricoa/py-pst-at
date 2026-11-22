@@ -1,3 +1,10 @@
 {
-    
+    "test_user" : {
+        "email":"customer@practicesoftwaretesting.com",
+        "password":"welcome01"
+    },
+    "test_user2" : {
+        "email":"2customer@practicesoftwaretesting.com",
+        "password":"welcome01"
+    }
 }
