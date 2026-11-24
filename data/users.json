@@ -1,10 +1,26 @@
 {
     "test_user" : {
-        "email":"customer@practicesoftwaretesting.com",
-        "password":"welcome01"
+        "email":"new_chi_user@gmail.com",
+        "password":"n0tApassword@"
     },
     "test_user2" : {
-        "email":"2customer@practicesoftwaretesting.com",
+        "email":"customer2@practicesoftwaretesting.com",
         "password":"welcome01"
+    },
+    "reg_user" : {
+        "first_name": "New",
+        "last_name": "User",
+        "address": {
+            "street" : "Ginger Street",
+            "house_number" : "64",
+            "city": "New Jack",
+            "state": "Illinois",
+            "country": "USA",
+            "postcode": "999999"
+        },
+        "phone": "034456678",
+        "dob": "2002-10-21",
+        "email": "new_jack_user@gmail.com",
+        "password": "n0tApassword@"
     }
 }

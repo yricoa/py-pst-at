@@ -1,3 +1,6 @@
 .*/
 .env
 **/__*
+logs/*
+allure-report/*
+result/*

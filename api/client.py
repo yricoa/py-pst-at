@@ -1,9 +1,12 @@
+import logging
 from playwright.sync_api import APIRequestContext,APIResponse
 
 class ApiClient:
+    success_code = [200,201,204]
     def __init__(self,request_context:APIRequestContext):
         self.request = request_context
         self.token : str | None = None
+        self.logger = logging.getLogger(__name__)
 
     def build_headers(self, auth:bool = False, extra_headers:dict[str,str] | None=None):
         headers = {"Accept" : "application/json"}
@@ -18,16 +21,36 @@ class ApiClient:
 
     def get(self, endpoint:str | None=None,
             auth:bool = False, extra_headers:dict | None=None) -> APIResponse:
-        return self.request.get(url=endpoint,headers=self.build_headers(auth,extra_headers))
+        resp = self.request.get(url=endpoint,headers=self.build_headers(auth,extra_headers))
+        if resp.status in self.success_code:
+            self.logger.debug(f"GET {endpoint} response status: {resp.status}")
+        else:
+            self.logger.debug(f"GET {endpoint} failed: {resp.json()}")
+        return resp
 
     def post(self, endpoint:str|None=None, data:dict|None=None,
              auth:bool = False, extra_headers:dict | None=None) -> APIResponse:
-        return self.request.post(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        resp = self.request.post(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        if resp.status in self.success_code:
+            self.logger.debug(f"POST {endpoint} response status: {resp.status}")
+        else:
+            self.logger.debug(f"POST {endpoint} failed: {resp.json()}")
+        return resp
 
     def put(self, endpoint:str | None=None, data:dict| None = None,
             auth:bool = False, extra_headers:dict | None = None) -> APIResponse:
-        return self.request.put(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        resp = self.request.put(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        if resp.status in self.success_code:
+            self.logger.debug(f"PUT {endpoint} response status: {resp.status}")
+        else:
+            self.logger.debug(f"PUT {endpoint} failed: {resp.json()}")
+        return resp
 
     def delete(self, endpoint:str | None=None, data:dict| None = None,
                auth:bool = False, extra_headers:dict | None = None) -> APIResponse:
-        return self.request.delete(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        resp = self.request.delete(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+        if resp.status in self.success_code:
+            self.logger.debug(f"DELETE {endpoint} response status: {resp.status}")
+        else:
+            self.logger.debug(f"DELETE {endpoint} failed: {resp.json()}")
+        return resp
