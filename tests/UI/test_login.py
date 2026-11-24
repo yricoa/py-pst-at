@@ -1,9 +1,11 @@
+import pytest
 from playwright.sync_api import Page
 
 from config.settings import USER_DATA, Settings
 from pages.login_page import LoginPage
 
-
+@pytest.mark.smoke
+@pytest.mark.auth
 def test_login_success(page:Page,settings:Settings):
     login_page = LoginPage(page=page,settings=settings)
     login_page.navigate()
