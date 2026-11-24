@@ -8,7 +8,7 @@ from config.settings import Settings
 def pytest_addoption(parser: pytest.Parser) -> None:
     parser.addoption("--sprint",type=int, default=5)
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def settings(request:pytest.FixtureRequest) -> Settings:
     return Settings(sprint=request.config.getoption("--sprint"))
 
@@ -16,7 +16,7 @@ def settings(request:pytest.FixtureRequest) -> Settings:
 from playwright.sync_api import Playwright,APIRequestContext
 from api.client import ApiClient
 
-@pytest.fixture
+@pytest.fixture(scope="session")
 def make_session(playwright:Playwright,settings:Settings):
     contexts : list[APIRequestContext] = []
 
@@ -32,12 +32,6 @@ def make_session(playwright:Playwright,settings:Settings):
         ctx.dispose()
 
 # UI page
-from pages.base_page import BasePage
-from playwright.sync_api import Page
-
-
 @pytest.fixture
-def make_page(page: Page, settings:Settings):
-    def _create(page_cls,*args,**kwargs):
-        return page_cls(page, settings, *args, **kwargs)
-    return _create
+def browser_context_args(browser_context_args:dict,settings:Settings):
+    return {**browser_context_args, "base_url" : settings.ui_url}
