@@ -3,9 +3,12 @@ import os
 import json
 from pathlib import Path
 from dataclasses import dataclass, field
+from playwright.sync_api import Locator
+import logging
 
 load_dotenv()
 TEST_DATA_DIR = Path(__file__).parent.parent/"data"
+LOG_DIR = Path(__file__).parent.parent/"logs"
 DOMAIN = os.getenv("DOMAIN")
 
 def _load_json(_path) -> dict:
@@ -31,4 +34,8 @@ class Settings:
         ui_url = f"https://{ui_prefix}.{DOMAIN}" if sprint < 5 else f"https://{DOMAIN}"
         object.__setattr__(self,"api_url",f"https://{api_prefix}.{DOMAIN}")
         object.__setattr__(self,"ui_url",ui_url)
-    
+
+@dataclass
+class Element:
+    locator : str
+    desc : str
