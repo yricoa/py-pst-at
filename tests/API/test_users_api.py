@@ -4,12 +4,12 @@ import allure
 from config.settings import USER_DATA
 from api.users import Users
 
-@pytest.mark.smoke
 @pytest.mark.auth
 @pytest.mark.api
 @allure.title("Test Users Api")
 class TestUsersApi:
 
+    @pytest.mark.smoke
     @allure.title("TC001")
     def test_user_login(self,seeded_user):
         user_login = seeded_user.login()
@@ -20,11 +20,12 @@ class TestUsersApi:
     @allure.title("TC002")
     def test_register_new_user(self,seeded_user):
         with allure.step("Assert register status"):
+            seeded_user.login()
             assert seeded_user.get_user_info().status == 200
 
     @allure.title("TC003")
     def test_negative_login(self,make_session):
-        invalid_user = Users(make_session(),USER_DATA["invalid_user"]).login()
+        invalid_user = Users(make_session(),USER_DATA["invalid_user_password"]).login()
         with allure.step("Invalid User cannot login"):
             assert invalid_user.status == 401
             assert "Unauthorized" in str(invalid_user.json().get("error"))

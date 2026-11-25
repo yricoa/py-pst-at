@@ -11,13 +11,13 @@ class ApiClient:
     def build_headers(self, auth:bool = False, extra_headers:dict[str,str] | None=None):
         headers = {"Accept" : "application/json"}
         if auth == True and self.token:
-            headers["Authorization"] = self.token
+            headers["Authorization"] = f"Bearer {self.token}"
         if extra_headers:
             headers.update(extra_headers)
         return headers
 
     def set_token(self,token:str):
-        self.token = f"Bearer {token}"
+        self.token = token
 
     def get(self, endpoint:str | None=None,
             auth:bool = False, extra_headers:dict | None=None) -> APIResponse:

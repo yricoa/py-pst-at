@@ -49,7 +49,6 @@ class Users:
 
     @allure.step("Get User detail")
     def get_user_info(self) -> APIResponse: # get user id
-        self.logger.info(f"get user detail - users/me")
         response = self.client.get("users/me",auth = True)
         if response.status == 200:
             self.user_data["id"] = response.json().get("id")
@@ -59,6 +58,7 @@ class Users:
     @allure.step("User Logout")
     def logout(self):
         response = self.client.get("users/logout",auth=True)
+        self.logger.debug(f"{self.user_data.get("email")} logging out")
         if response.status == 200:
             msg = f"User logout successfully" if not self.is_admin else "Admin logout successfully"
             self.client.set_token(None)

@@ -54,14 +54,6 @@ def make_session(playwright:Playwright,settings:Settings):
         ctx.dispose()
 
 # --------------------------------------------------------------
-# UI page
-# --------------------------------------------------------------
-
-@pytest.fixture
-def browser_context_args(browser_context_args:dict,settings:Settings):
-    return {**browser_context_args, "base_url" : settings.ui_url}
-
-# --------------------------------------------------------------
 # Seeding
 # --------------------------------------------------------------
 from api.users import Users
@@ -73,7 +65,7 @@ def admin_user(make_session):
     yield admin
     admin.logout()
 
-@pytest.fixture(scope="session")
+@pytest.fixture
 @allure.title("Seeding test user")
 def seeded_user(make_session,worker_id,admin_user):
     user_data = USER_DATA["seeded_user"]
@@ -90,8 +82,26 @@ def seeded_user(make_session,worker_id,admin_user):
     yield seeded_user
 
     # Clean up
-    if not seeded_user.get_token():
+    if seeded_user.get_token():
         seeded_user.logout()
     admin_user.delete_user(seeded_user.user_data["id"])
 
-    
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+
+    # Capture only when the main test call fails
+    if rep.when == "call" and rep.failed:
+        page = item.funcargs.get("page")
+        if page and not page.is_closed():
+            allure.attach(
+                page.screenshot(full_page=True),
+                name="failure_screenshot",
+                attachment_type=allure.attachment_type.PNG
+            )
+            allure.attach(
+                page.content(),
+                name="headless_dom",
+                attachment_type=allure.attachment_type.HTML,
+            )
