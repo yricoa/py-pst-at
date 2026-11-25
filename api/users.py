@@ -12,6 +12,9 @@ class Users:
 
     def get_id(self):
         return self.user_data.get("id") if self.user_data.get("id") else None
+
+    def get_token(self):
+        return self.client.token
     
     @allure.step("User Log in")
     def login(self) -> APIResponse:
@@ -45,7 +48,7 @@ class Users:
             return response
 
     @allure.step("Get User detail")
-    def user_info(self) -> APIResponse: # get user id
+    def get_user_info(self) -> APIResponse: # get user id
         self.logger.info(f"get user detail - users/me")
         response = self.client.get("users/me",auth = True)
         if response.status == 200:
@@ -58,5 +61,6 @@ class Users:
         response = self.client.get("users/logout",auth=True)
         if response.status == 200:
             msg = f"User logout successfully" if not self.is_admin else "Admin logout successfully"
+            self.client.set_token(None)
             self.logger.info(msg)
             return response

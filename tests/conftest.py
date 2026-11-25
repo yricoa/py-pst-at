@@ -73,7 +73,7 @@ def admin_user(make_session):
     yield admin
     admin.logout()
 
-@pytest.fixture(scope="session",autouse="true")
+@pytest.fixture(scope="session")
 @allure.title("Seeding test user")
 def seeded_user(make_session,worker_id,admin_user):
     user_data = USER_DATA["seeded_user"]
@@ -81,16 +81,17 @@ def seeded_user(make_session,worker_id,admin_user):
     seeded_user = Users(client=make_session(),user_data=user_data) 
     seed_user_reg_resp = seeded_user.register() # Register response return ID
 
-    # User already exists get ID by user_info()
+    # User already exists get ID by get_user_info()
     if "A customer with this email address already exists" in str(seed_user_reg_resp.json().get("email")): 
         login_resp = seeded_user.login()
         if login_resp.status == 200:
-            seeded_user.user_info()
+            seeded_user.get_user_info()
 
     yield seeded_user
 
     # Clean up
-    seeded_user.logout()
+    if not seeded_user.get_token():
+        seeded_user.logout()
     admin_user.delete_user(seeded_user.user_data["id"])
 
     

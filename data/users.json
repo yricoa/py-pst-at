@@ -4,7 +4,7 @@
         "password":"welcome01"
     },
     "seeded_user" : {
-        "first_name": "New",
+        "first_name": "Seeded",
         "last_name": "User",
         "address": {
             "street" : "Ginger Street",
@@ -18,5 +18,25 @@
         "dob": "2002-10-21",
         "email": "new_jack_user@gmail.com",
         "password": "n0tApassword@"
+    },
+    "new_user" : {
+        "first_name": "New",
+        "last_name": "User",
+        "address": {
+            "street" : "Ginger Street",
+            "house_number" : "64",
+            "city": "New Jack",
+            "state": "Illinois",
+            "country": "USA",
+            "postcode": "999999"
+        },
+        "phone": "034456678",
+        "dob": "2002-10-21",
+        "email": "new_reg_user@gmail.com",
+        "password": "n0tApassword@"
+    },
+    "invalid_user" : {
+        "email":"customer@practicesoftwaretesting.com",
+        "password":"hellnothisaintthepassword"
     }
 }
