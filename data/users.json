@@ -1,13 +1,9 @@
-{
-    "test_user" : {
-        "email":"new_chi_user@gmail.com",
-        "password":"n0tApassword@"
-    },
-    "test_user2" : {
-        "email":"customer2@practicesoftwaretesting.com",
+{    
+    "admin" : {
+        "email":"admin@practicesoftwaretesting.com",
         "password":"welcome01"
     },
-    "reg_user" : {
+    "seeded_user" : {
         "first_name": "New",
         "last_name": "User",
         "address": {
