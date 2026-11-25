@@ -1,13 +1,25 @@
-{
-    "test_user" : {
-        "email":"new_chi_user@gmail.com",
-        "password":"n0tApassword@"
-    },
-    "test_user2" : {
-        "email":"customer2@practicesoftwaretesting.com",
+{    
+    "admin" : {
+        "email":"admin@practicesoftwaretesting.com",
         "password":"welcome01"
     },
-    "reg_user" : {
+    "seeded_user" : {
+        "first_name": "Seeded",
+        "last_name": "User",
+        "address": {
+            "street" : "Ginger Street",
+            "house_number" : "64",
+            "city": "New Jack",
+            "state": "Illinois",
+            "country": "United States of America (the)",
+            "postcode": "12345"
+        },
+        "phone": "034456678",
+        "dob": "2002-10-21",
+        "email": "new_jack_user@gmail.com",
+        "password": "n0tApassword@"
+    },
+    "new_user" : {
         "first_name": "New",
         "last_name": "User",
         "address": {
@@ -15,12 +27,20 @@
             "house_number" : "64",
             "city": "New Jack",
             "state": "Illinois",
-            "country": "USA",
-            "postcode": "999999"
+            "country": "United States of America (the)",
+            "postcode": "12345"
         },
         "phone": "034456678",
         "dob": "2002-10-21",
-        "email": "new_jack_user@gmail.com",
+        "email": "new_reg_user@gmail.com",
         "password": "n0tApassword@"
+    },
+    "invalid_user_password" : {
+        "email":"customerasdasdsa@practicesoftwaretesting.com",
+        "password":"hellnothisaintthepassword"
+    },
+    "invalid_user_email": {
+        "email":"customerpracticesoftwaretesting.com",
+        "password":"hellnothisaintthepassword"
     }
 }

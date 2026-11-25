@@ -18,7 +18,8 @@ class BasePage:
         self.page.goto(self.endpoint)
 
     def wait_for_page_load(self):
-        expect(self.load_verify).to_be_visible()
+        expect(self.load_verify).to_be_visible(timeout=10000)
+        self.page.wait_for_timeout(1000)
         return self.load_verify.is_visible()
 
     def fill(self, ele: Element, text: str):
@@ -27,6 +28,7 @@ class BasePage:
             if locator.is_visible():
                 self.logger.info(f"Typing into {ele.desc}")
                 locator.fill(text)
+                self.page.wait_for_timeout(300)
             else:
                 self.logger.info(f"{ele.desc} not found")
 
@@ -35,6 +37,30 @@ class BasePage:
             locator = self.page.locator(ele.locator)
             if locator.is_visible():
                 self.logger.info(f"Clicking {ele.desc}")
+                locator.scroll_into_view_if_needed()
                 locator.click()
+                self.page.wait_for_timeout(500)
             else:
-                self.logger.info(f"{ele.desc} not found")    
+                self.logger.info(f"{ele.desc} not found")
+
+    def select(self,ele:Element,label:str):
+        with allure.step(f"Select {label} from {ele.desc}"):
+            locator = self.page.locator(ele.locator)
+            if locator.is_visible():
+                self.logger.info(f"Selecting from {ele.desc}")
+                locator.select_option(label=label)
+            else:
+                self.logger.info(f"{ele.desc} not found")
+
+    def wait_for_element_visible(self,ele:Element):
+        with allure.step(f"Wait for {ele.desc} visible"):
+            locator = self.page.locator(ele.locator)
+            expect(locator).to_be_visible(timeout=10000)
+            self.page.wait_for_timeout(500)
+
+    def wait_for_element_disappear(self,ele:Element):
+        with allure.step(f"Wait for {ele.desc} to be invisible"):
+            locator = self.page.locator(ele.locator)
+            expect(locator).to_be_visible(timeout=10000)
+            expect(locator).to_be_hidden(timeout=10000)
+            self.page.wait_for_timeout(500)

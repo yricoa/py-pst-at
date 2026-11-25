@@ -3,15 +3,15 @@ from playwright.sync_api import APIRequestContext,APIResponse
 
 class ApiClient:
     success_code = [200,201,204]
-    def __init__(self,request_context:APIRequestContext):
+    def __init__(self,request_context:APIRequestContext,logger:logging.Logger):
         self.request = request_context
         self.token : str | None = None
-        self.logger = logging.getLogger(__name__)
+        self.logger = logger
 
     def build_headers(self, auth:bool = False, extra_headers:dict[str,str] | None=None):
         headers = {"Accept" : "application/json"}
         if auth == True and self.token:
-            headers["Authorization"] = self.token
+            headers["Authorization"] = f"Bearer {self.token}"
         if extra_headers:
             headers.update(extra_headers)
         return headers

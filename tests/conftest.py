@@ -1,6 +1,6 @@
 import pytest
 import allure
-from config.settings import Settings,LOG_DIR
+from config.settings import Settings,LOG_DIR,USER_DATA
 
 # --------------------------------------------------------------
 # CLI Options 
@@ -36,6 +36,7 @@ def _skip_sprint_without_features(request,settings):
 # --------------------------------------------------------------
 from playwright.sync_api import Playwright,APIRequestContext
 from api.client import ApiClient
+import logging
 
 @pytest.fixture(scope="session")
 def make_session(playwright:Playwright,settings:Settings):
@@ -44,8 +45,7 @@ def make_session(playwright:Playwright,settings:Settings):
     def _create() -> ApiClient:
         ctx = playwright.request.new_context(base_url=settings.api_url)
         contexts.append(ctx)
-        api_client = ApiClient(request_context=ctx)
-
+        api_client = ApiClient(request_context=ctx,logger=logging.getLogger(__name__))
         return api_client
 
     yield _create
@@ -54,9 +54,54 @@ def make_session(playwright:Playwright,settings:Settings):
         ctx.dispose()
 
 # --------------------------------------------------------------
-# UI page
+# Seeding
 # --------------------------------------------------------------
+from api.users import Users
+
+@pytest.fixture(scope="session")
+def admin_user(make_session):
+    admin = Users(make_session(),USER_DATA["admin"],is_admin=True)
+    admin.login()
+    yield admin
+    admin.logout()
 
 @pytest.fixture
-def browser_context_args(browser_context_args:dict,settings:Settings):
-    return {**browser_context_args, "base_url" : settings.ui_url}
+@allure.title("Seeding test user")
+def seeded_user(make_session,worker_id,admin_user):
+    user_data = USER_DATA["seeded_user"]
+    user_data["email"] = f"new_jack_{worker_id}@gmail.com"
+    seeded_user = Users(client=make_session(),user_data=user_data) 
+    seed_user_reg_resp = seeded_user.register() # Register response return ID
+
+    # User already exists get ID by get_user_info()
+    if "A customer with this email address already exists" in str(seed_user_reg_resp.json().get("email")): 
+        login_resp = seeded_user.login()
+        if login_resp.status == 200:
+            seeded_user.get_user_info()
+
+    yield seeded_user
+
+    # Clean up
+    if seeded_user.get_token():
+        seeded_user.logout()
+    admin_user.delete_user(seeded_user.user_data["id"])
+
+@pytest.hookimpl(tryfirst=True, hookwrapper=True)
+def pytest_runtest_makereport(item, call):
+    outcome = yield
+    rep = outcome.get_result()
+
+    # Capture only when the main test call fails
+    if rep.when == "call" and rep.failed:
+        page = item.funcargs.get("page")
+        if page and not page.is_closed():
+            allure.attach(
+                page.screenshot(full_page=True),
+                name="failure_screenshot",
+                attachment_type=allure.attachment_type.PNG
+            )
+            allure.attach(
+                page.content(),
+                name="headless_dom",
+                attachment_type=allure.attachment_type.HTML,
+            )
