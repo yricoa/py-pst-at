@@ -29,7 +29,7 @@ class RegisterPage(BasePage):
         self.fill(self.last_name,user_data["last_name"])
         self.fill(self.dob,user_data["dob"])
         self.select(self.country,user_data["address"]["country"])
-        self.fill(self.postal_code,user_data["address"]["postcode"])
+        self.fill(self.postal_code,user_data["address"]["postal_code"])
         self.fill(self.house_number,user_data["address"]["house_number"])
         self.wait_for_element_disappear(self.address_lookup_loader)
         self.fill(self.state,user_data["address"]["state"])

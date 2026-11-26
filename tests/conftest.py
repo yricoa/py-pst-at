@@ -57,6 +57,7 @@ def make_session(playwright:Playwright,settings:Settings):
 # Seeding
 # --------------------------------------------------------------
 from api.users import Users
+from datetime import datetime as dt
 
 @pytest.fixture(scope="session")
 def admin_user(make_session):
@@ -68,23 +69,22 @@ def admin_user(make_session):
 @pytest.fixture
 @allure.title("Seeding test user")
 def seeded_user(make_session,worker_id,admin_user):
+    suffix = f"{worker_id}_{str(dt.now().strftime("%M"))}_{str(dt.now().strftime("%f")[-3:])}"
     user_data = USER_DATA["seeded_user"]
-    user_data["email"] = f"new_jack_{worker_id}@gmail.com"
+    user_data["email"] = f"new_{suffix}@gmail.com"
     seeded_user = Users(client=make_session(),user_data=user_data) 
-    seed_user_reg_resp = seeded_user.register() # Register response return ID
-
+    seed_user_reg_resp = seeded_user.register(is_setup_call=True) # Register response return ID
+    id = seeded_user.user_data["id"]
     # User already exists get ID by get_user_info()
     if "A customer with this email address already exists" in str(seed_user_reg_resp.json().get("email")): 
-        login_resp = seeded_user.login()
-        if login_resp.status == 200:
-            seeded_user.get_user_info()
+        seeded_user.get_user_info(is_setup_call=True)
 
     yield seeded_user
 
     # Clean up
     if seeded_user.get_token():
-        seeded_user.logout()
-    admin_user.delete_user(seeded_user.user_data["id"])
+        seeded_user.logout(is_setup_call=True)
+    admin_user.delete_user(id)
 
 @pytest.hookimpl(tryfirst=True, hookwrapper=True)
 def pytest_runtest_makereport(item, call):

@@ -12,7 +12,7 @@
             "city": "New Jack",
             "state": "Illinois",
             "country": "United States of America (the)",
-            "postcode": "12345"
+            "postal_code": "12345"
         },
         "phone": "034456678",
         "dob": "2002-10-21",
@@ -28,7 +28,7 @@
             "city": "New Jack",
             "state": "Illinois",
             "country": "United States of America (the)",
-            "postcode": "12345"
+            "postal_code": "12345"
         },
         "phone": "034456678",
         "dob": "2002-10-21",
@@ -42,5 +42,20 @@
     "invalid_user_email": {
         "email":"customerpracticesoftwaretesting.com",
         "password":"hellnothisaintthepassword"
+    },
+    "profile_update_fields" : {
+        "first_name": "New Updated",
+        "last_name": "User",
+        "address": {
+            "street" : "New Ginger Street",
+            "house_number" : "64",
+            "city": "New Jack",
+            "state": "Illinois",
+            "country": "United States of America (the)",
+            "postal_code": "12345"
+        },
+        "phone": "099999999",
+        "dob": "1992-10-21",
+        "email":"updated_user_email@gmail.com"
     }
 }

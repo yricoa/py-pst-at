@@ -15,12 +15,14 @@ class BasePage:
 
     def navigate(self):
         self.logger.info(f"Go to {self.endpoint}")
-        self.page.goto(self.endpoint)
+        with allure.step(f"Navigating to {self.page.url}/{self.endpoint}"):
+            self.page.goto(self.endpoint)
 
     def wait_for_page_load(self):
-        expect(self.load_verify).to_be_visible(timeout=10000)
-        self.page.wait_for_timeout(1000)
-        return self.load_verify.is_visible()
+        with allure.step(f"Verify {self.endpoint} page loaded"):
+            expect(self.load_verify).to_be_visible(timeout=10000)
+            self.page.wait_for_timeout(1000)
+            return self.load_verify.is_visible()
 
     def fill(self, ele: Element, text: str):
         with allure.step(f"Filling {ele.desc}"):
@@ -57,10 +59,21 @@ class BasePage:
             locator = self.page.locator(ele.locator)
             expect(locator).to_be_visible(timeout=10000)
             self.page.wait_for_timeout(500)
+            return locator.is_visible(timeout=5000)
 
     def wait_for_element_disappear(self,ele:Element):
         with allure.step(f"Wait for {ele.desc} to be invisible"):
             locator = self.page.locator(ele.locator)
             expect(locator).to_be_visible(timeout=10000)
             expect(locator).to_be_hidden(timeout=10000)
+            self.page.wait_for_timeout(500)
+
+    def wait_for_element_have_text(self,ele:Element,text:str,negative:bool=False):
+        with allure.step(f"Wait for {ele.desc} to have text" if not negative else
+                         f"Wait for {ele.desc} to not have text"):
+            locator = self.page.locator(ele.locator)
+            if negative:
+                expect(locator).not_to_contain_text(text,timeout=10000)
+            else:
+                expect(locator).to_contain_text(text,timeout=10000)
             self.page.wait_for_timeout(500)
