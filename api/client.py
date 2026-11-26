@@ -1,5 +1,6 @@
 import logging
 from playwright.sync_api import APIRequestContext,APIResponse
+import allure
 
 class ApiClient:
     success_code = [200,201,204]
@@ -21,36 +22,40 @@ class ApiClient:
 
     def get(self, endpoint:str | None=None,
             auth:bool = False, extra_headers:dict | None=None) -> APIResponse:
-        resp = self.request.get(url=endpoint,headers=self.build_headers(auth,extra_headers))
-        if resp.status in self.success_code:
-            self.logger.debug(f"GET {endpoint} response status: {resp.status}")
-        else:
-            self.logger.debug(f"GET {endpoint} failed: {resp.json()}")
-        return resp
+        with allure.step(f"GET request {endpoint}"):
+            resp = self.request.get(url=endpoint,headers=self.build_headers(auth,extra_headers))
+            if resp.status in self.success_code:
+                self.logger.debug(f"GET {endpoint} response status: {resp.status}")
+            else:
+                self.logger.debug(f"GET {endpoint} failed: {resp.json()}")
+            return resp
 
     def post(self, endpoint:str|None=None, data:dict|None=None,
              auth:bool = False, extra_headers:dict | None=None) -> APIResponse:
-        resp = self.request.post(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
-        if resp.status in self.success_code:
-            self.logger.debug(f"POST {endpoint} response status: {resp.status}")
-        else:
-            self.logger.debug(f"POST {endpoint} failed: {resp.json()}")
-        return resp
+        with allure.step(f"POST request {endpoint}"):
+            resp = self.request.post(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+            if resp.status in self.success_code:
+                self.logger.debug(f"POST {endpoint} response status: {resp.status}")
+            else:
+                self.logger.debug(f"POST {endpoint} failed: {resp.json()}")
+            return resp
 
     def put(self, endpoint:str | None=None, data:dict| None = None,
             auth:bool = False, extra_headers:dict | None = None) -> APIResponse:
-        resp = self.request.put(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
-        if resp.status in self.success_code:
-            self.logger.debug(f"PUT {endpoint} response status: {resp.status}")
-        else:
-            self.logger.debug(f"PUT {endpoint} failed: {resp.json()}")
-        return resp
+        with allure.step(f"PUT request {endpoint}"):
+            resp = self.request.put(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+            if resp.status in self.success_code:
+                self.logger.debug(f"PUT {endpoint} response status: {resp.status}")
+            else:
+                self.logger.debug(f"PUT {endpoint} failed: {resp.json()}")
+            return resp
 
     def delete(self, endpoint:str | None=None, data:dict| None = None,
                auth:bool = False, extra_headers:dict | None = None) -> APIResponse:
-        resp = self.request.delete(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
-        if resp.status in self.success_code:
-            self.logger.debug(f"DELETE {endpoint} response status: {resp.status}")
-        else:
-            self.logger.debug(f"DELETE {endpoint} failed: {resp.json()}")
-        return resp
+        with allure.step(f"DELETE request {endpoint}"):
+            resp = self.request.delete(endpoint, headers=self.build_headers(auth,extra_headers), data=data)
+            if resp.status in self.success_code:
+                self.logger.debug(f"DELETE {endpoint} response status: {resp.status}")
+            else:
+                self.logger.debug(f"DELETE {endpoint} failed: {resp.json()}")
+            return resp

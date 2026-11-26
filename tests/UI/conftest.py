@@ -1,14 +1,19 @@
-# --------------------------------------------------------------
+#---------------------------------------------------------------------------
 # UI page
-# --------------------------------------------------------------
+
 import pytest
-from playwright.sync_api import Playwright
 import allure
+
+
+#---------------------------------------------------------------------------
+# POM fixtures
+#---------------------------------------------------------------------------
+from playwright.sync_api import Playwright
 
 from config.settings import Settings 
 from pages.login_page import LoginPage
 from pages.register_page import RegisterPage
-from pages.account_page import AccountPage
+from pages.account_page import AccountPage,AccountProfilePage
 
 @pytest.fixture(scope="function")
 def page(playwright:Playwright, settings:Settings):
@@ -30,6 +35,13 @@ def register_page(page,settings) -> RegisterPage:
 def account_page(page,settings) -> AccountPage:
     return AccountPage(page,settings)
 
+@pytest.fixture
+def profile_page(page,settings) -> AccountProfilePage:
+    return AccountProfilePage(page,settings)
+
+#---------------------------------------------------------------------------
+# Test account clean up
+#---------------------------------------------------------------------------
 from api.users import Users
 @pytest.fixture
 @allure.title("Clean up registered test user")
